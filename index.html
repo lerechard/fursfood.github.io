@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurant Entry Generator</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: #eaeaea;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: #1f1f1f;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
+            max-width: 600px;
+            width: 100%;
+            text-align: left;
+        }
+
+        h1 {
+            text-align: center;
+            color: #c69214;
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+            margin-bottom: 5px;
+        }
+
+        input, select, button {
+            width: 100%;
+            padding: 8px;
+            font-size: 1rem;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            border: 1px solid #333333;
+            background-color: #2a2a2a;
+            color: #eaeaea;
+        }
+
+        button {
+            background-color: #1e4d2b;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #c69214;
+        }
+
+        textarea {
+            width: 100%;
+            height: 150px;
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #333333;
+            background-color: #2a2a2a;
+            color: #eaeaea;
+            font-family: monospace;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <h1>Restaurant Entry Generator</h1>
+    <div class="container">
+        <label for="name">Restaurant Name:</label>
+        <input type="text" id="name" placeholder="e.g., Chipotle" required>
+
+        <label for="salty">Salty (0-10):</label>
+        <input type="number" id="salty" min="0" max="10" placeholder="e.g., 6" required>
+
+        <label for="sweet">Sweet (0-10):</label>
+        <input type="number" id="sweet" min="0" max="10" placeholder="e.g., 3" required>
+
+        <label for="protein">Protein (0-10):</label>
+        <input type="number" id="protein" min="0" max="10" placeholder="e.g., 8" required>
+
+        <label for="spicy">Spicy (0-10):</label>
+        <input type="number" id="spicy" min="0" max="10" placeholder="e.g., 5" required>
+
+        <label for="meals">Available Meals:</label>
+        <select id="meals" multiple>
+            <option value="breakfast">Breakfast</option>
+            <option value="lunch">Lunch</option>
+            <option value="dinner">Dinner</option>
+        </select>
+
+        <button id="generateButton">Generate Entry</button>
+
+        <label for="output">Generated Entry:</label>
+        <textarea id="output" readonly></textarea>
+        <button id="copyButton">Copy to Clipboard</button>
+    </div>
+
+    <script>
+        document.getElementById("generateButton").addEventListener("click", () => {
+            const name = document.getElementById("name").value.trim();
+            const salty = parseInt(document.getElementById("salty").value, 10);
+            const sweet = parseInt(document.getElementById("sweet").value, 10);
+            const protein = parseInt(document.getElementById("protein").value, 10);
+            const spicy = parseInt(document.getElementById("spicy").value, 10);
+            const meals = Array.from(document.getElementById("meals").selectedOptions).map(option => option.value);
+
+            if (!name || isNaN(salty) || isNaN(sweet) || isNaN(protein) || isNaN(spicy) || meals.length === 0) {
+                alert("Please fill out all fields and select at least one meal.");
+                return;
+            }
+
+            // Generate formatted entry
+            const formattedEntry = `            {\n` +
+                `                name: "${name}",\n` +
+                `                attributes: { salty: ${salty}, sweet: ${sweet}, protein: ${protein}, spicy: ${spicy} },\n` +
+                `                meals: [${meals.map(meal => `"${meal}"`).join(", ")}]\n` +
+                `            },`;
+
+            // Set the output textarea value
+            document.getElementById("output").value = formattedEntry;
+        });
+
+        // Copy to Clipboard
+        document.getElementById("copyButton").addEventListener("click", () => {
+            const output = document.getElementById("output");
+            output.select();
+            output.setSelectionRange(0, 99999); // For mobile devices
+            navigator.clipboard.writeText(output.value).then(() => {
+                alert("Entry copied to clipboard!");
+            }).catch(err => {
+                alert("Failed to copy: " + err);
+            });
+        });
+    </script>
+</body>
+</html>
